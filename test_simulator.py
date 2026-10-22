@@ -1,4 +1,5 @@
 import itertools
+import pathlib
 import unittest
 
 import cmos
@@ -101,6 +102,26 @@ class TestExpressions(unittest.TestCase):
     def test_rejects_bad_constant(self):
         with self.assertRaises(ValueError):
             tt.expression_table("A and 5")
+
+
+class TestWebPage(unittest.TestCase):
+    """The web page ships in the same repo, so keep its files wired together."""
+
+    root = pathlib.Path(__file__).resolve().parent
+
+    def test_page_files_exist(self):
+        for name in ("index.html", "style.css", "logic.js", "app.js"):
+            self.assertTrue((self.root / name).exists(), name)
+
+    def test_index_references_existing_files(self):
+        html = (self.root / "index.html").read_text(encoding="utf-8")
+        for name in ("style.css", "logic.js", "app.js"):
+            self.assertIn(name, html)
+
+    def test_web_command_is_registered(self):
+        import main
+        args = main.build_parser().parse_args(["web", "--port", "8123", "--no-browser"])
+        self.assertEqual((args.command, args.port, args.no_browser), ("web", 8123, True))
 
 
 if __name__ == "__main__":

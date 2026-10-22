@@ -6,10 +6,15 @@ Usage:
     python main.py expr "(not X and Y) or (X and not Y)"
     python main.py universal
     python main.py cmos
+    python main.py web
 """
 
 import argparse
+import functools
+import http.server
+import pathlib
 import sys
+import webbrowser
 
 import cmos
 import gates
@@ -61,6 +66,31 @@ def cmd_cmos(_args):
     cmos.print_nand_table()
 
 
+def cmd_web(args):
+    """Serve index.html from this folder and open it in the browser."""
+    root = pathlib.Path(__file__).resolve().parent
+    if not (root / "index.html").exists():
+        sys.exit("index.html was not found next to main.py.")
+    handler = functools.partial(
+        http.server.SimpleHTTPRequestHandler, directory=str(root)
+    )
+    try:
+        server = http.server.ThreadingHTTPServer(("127.0.0.1", args.port), handler)
+    except OSError as exc:
+        sys.exit(f"Could not start the server on port {args.port}: {exc}. "
+                 "Try another one with --port.")
+    url = f"http://127.0.0.1:{args.port}/"
+    print(f"Serving the simulator at {url} (press Ctrl+C to stop)")
+    if not args.no_browser:
+        webbrowser.open(url)
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        print("\nStopped.")
+    finally:
+        server.server_close()
+
+
 def build_parser():
     parser = argparse.ArgumentParser(description="Logic gate simulator")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -82,6 +112,11 @@ def build_parser():
     sub.add_parser(
         "cmos", help="transistor-level CMOS NOT and NAND tables"
     ).set_defaults(func=cmd_cmos)
+
+    p = sub.add_parser("web", help="open the interactive web page in your browser")
+    p.add_argument("--port", type=int, default=8000, help="port to serve on (default 8000)")
+    p.add_argument("--no-browser", action="store_true", help="do not open a browser window")
+    p.set_defaults(func=cmd_web)
     return parser
 
 

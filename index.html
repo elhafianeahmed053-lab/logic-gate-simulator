@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Logic Gate Simulator</title>
+  <meta name="description" content="Flip the inputs of a logic gate, see its truth table, and look inside the CMOS transistors that build it.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip" href="#gates">Skip to the simulator</a>
+
+  <div class="wrap">
+    <header class="top">
+      <a href="https://github.com/elhafianeahmed053-lab/logic-gate-simulator">View code on GitHub</a>
+    </header>
+
+    <main>
+      <section id="gates" aria-labelledby="h-gates">
+        <h1 id="h-gates">Logic gate simulator</h1>
+        <p class="lede">Pick a gate, flip its inputs, and watch the output and truth table respond. Further down, open up the same gates and see the transistors inside.</p>
+
+        <fieldset class="picker" id="gate-picker">
+          <legend class="sr">Choose a gate</legend>
+        </fieldset>
+
+        <div class="board">
+          <div class="board-main">
+            <svg id="gate-svg" viewBox="0 0 400 180" role="group" aria-label="Gate diagram"></svg>
+            <p id="stage-status" class="status" role="status"></p>
+          </div>
+          <div class="board-table scroll">
+            <table class="tt" id="stage-table"></table>
+          </div>
+        </div>
+
+        <div class="facts">
+          <p class="formula" id="stage-formula"></p>
+          <p id="stage-rule"></p>
+          <div class="py">
+            <span class="py-label">Same in Python</span>
+            <code id="stage-py"></code>
+            <button type="button" class="copy" data-copy-for="stage-py">Copy</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="expressions" aria-labelledby="h-expr">
+        <h2 id="h-expr">Try your own expression</h2>
+        <p class="intro">Write a Boolean expression with <code>and</code>, <code>or</code>, <code>not</code>, <code>^</code> for XOR, and brackets. Use any variable names, up to six of them.</p>
+        <label class="sr" for="expr-input">Boolean expression</label>
+        <input id="expr-input" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" value="(not X and Y) or (X and not Y)">
+        <div class="chips" id="expr-examples"></div>
+        <p id="expr-message" class="msg" role="status"></p>
+        <div class="scroll tall">
+          <table class="tt" id="expr-table"></table>
+        </div>
+        <div class="py" id="expr-py-row">
+          <span class="py-label">Same in Python</span>
+          <code id="expr-py"></code>
+          <button type="button" class="copy" data-copy-for="expr-py">Copy</button>
+        </div>
+      </section>
+
+      <section id="cmos" aria-labelledby="h-cmos">
+        <h2 id="h-cmos">Inside a CMOS gate</h2>
+        <p class="intro">Each transistor is a switch. An nMOS switch is ON when its gate input is 1, and a pMOS switch is ON when its gate input is 0. Pull-up pMOS switches connect the output to 3 V, and pull-down nMOS switches connect it to 0 V.</p>
+
+        <fieldset class="picker" id="cmos-picker">
+          <legend class="sr">Choose a CMOS circuit</legend>
+        </fieldset>
+
+        <div class="board">
+          <div class="board-main">
+            <div class="toggles" id="cmos-toggles"></div>
+            <svg id="cmos-svg" role="group" aria-label="CMOS circuit diagram"></svg>
+            <p id="cmos-caption" class="status" role="status"></p>
+          </div>
+          <div class="board-table scroll">
+            <table class="tt" id="cmos-table"></table>
+          </div>
+        </div>
+
+        <div class="py">
+          <span class="py-label">Same in Python</span>
+          <code id="cmos-py">python main.py cmos</code>
+          <button type="button" class="copy" data-copy-for="cmos-py">Copy</button>
+        </div>
+      </section>
+
+      <section id="universal" aria-labelledby="h-uni">
+        <h2 id="h-uni">Why NAND and NOR are universal</h2>
+        <p class="intro">A gate is universal when it can build AND, OR and NOT on its own, so any circuit can be made from that one gate. This page builds each one and checks it against the real gate for every input.</p>
+        <div class="scroll">
+          <table class="tt spec" id="uni-table"></table>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <p>This page and the Python command-line tool share the same logic and the same tests. Run <code>python main.py web</code> to open this page from the Python project.</p>
+      <p><a href="https://github.com/elhafianeahmed053-lab/logic-gate-simulator">Source code and README on GitHub</a></p>
+    </footer>
+  </div>
+
+  <noscript><p class="wrap">This simulator needs JavaScript. The Python version works without it: run <code>python main.py gate xor</code>.</p></noscript>
+  <script src="logic.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
